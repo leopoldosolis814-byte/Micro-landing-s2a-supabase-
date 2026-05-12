@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cargando...</title>
+<meta property="og:title" id="og-title" content="Mirá esto 👀">
+<meta property="og:description" id="og-desc" content="Tocá para ver la oferta">
+<meta property="og:image" id="og-image" content="">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" id="tw-title" content="Mirá esto 👀">
+<meta name="twitter:image" id="tw-image" content="">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #000; font-family: 'Nunito', sans-serif; color: white; overflow: hidden; }
+  .container { width: 100vw; height: 100dvh; display: flex; flex-direction: column; position: relative; }
+
+  /* LOGO */
+  .logo-overlay { position: absolute; top: 16px; left: 16px; z-index: 20; width: 68px; height: 68px; border-radius: 50%; overflow: hidden; border: 3px solid #ff2d78; box-shadow: 0 0 18px rgba(255,45,120,0.5); background: #111; }
+  .logo-overlay img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* VIDEO / IMAGEN */
+  .bg-media { width: 100%; height: 46vh; object-fit: cover; object-position: center; display: block; }
+  .bg-img { width: 100%; height: 46vh; object-fit: cover; object-position: center; display: block; }
+
+  /* BADGE */
+  .badge { background: #ff2d78; color: #fff; padding: 6px 16px; border-radius: 20px; font-weight: 800; font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase; align-self: center; margin-top: -13px; z-index: 10; white-space: nowrap; max-width: 92%; overflow: hidden; text-overflow: ellipsis; box-shadow: 0 4px 15px rgba(255,45,120,0.4); }
+
+  /* CONTENIDO */
+  .content { flex: 1; display: flex; flex-direction: column; justify-content: space-evenly; align-items: center; text-align: center; padding: 8px 20px 20px; }
+  .promo-label { font-size: 11px; font-weight: 700; letter-spacing: 0.3em; color: #666; text-transform: uppercase; }
+  .title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(26px, 7vw, 36px); letter-spacing: 2px; color: #fff; line-height: 1.1; }
+  .price-box { display: flex; align-items: center; justify-content: center; gap: 12px; }
+  .old-price { color: #555; text-decoration: line-through; font-size: clamp(16px, 4vw, 20px); font-weight: 700; }
+  .price { color: #FFD600; font-family: 'Bebas Neue', sans-serif; font-size: clamp(48px, 13vw, 64px); line-height: 1; }
+  .pre-btn { font-size: 11px; color: #888; letter-spacing: 0.1em; }
+  .btn { background: #25d366; color: #fff; text-decoration: none; padding: 16px; width: 90%; border-radius: 12px; font-weight: 900; font-size: clamp(15px, 4vw, 18px); letter-spacing: 0.05em; text-transform: uppercase; box-shadow: 0 4px 20px rgba(37,211,102,0.4); display: flex; justify-content: center; align-items: center; gap: 10px; animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{ box-shadow:0 4px 20px rgba(37,211,102,0.4); transform:scale(1); } 50%{ box-shadow:0 4px 35px rgba(37,211,102,0.7); transform:scale(1.02); } }
+  .extra { font-size: 11px; color: #555; }
+
+  /* LOADING */
+  .loading { position: fixed; inset: 0; background: #000; display: flex; align-items: center; justify-content: center; z-index: 999; flex-direction: column; gap: 12px; }
+  .loading-dot { width: 10px; height: 10px; border-radius: 50%; background: #ff2d78; animation: blink 1.2s ease-in-out infinite; }
+  .loading-dot:nth-child(2){ animation-delay:.2s; } .loading-dot:nth-child(3){ animation-delay:.4s; }
+  .loading-dots { display: flex; gap: 8px; }
+  @keyframes blink { 0%,100%{ opacity:.2; transform:scale(0.8); } 50%{ opacity:1; transform:scale(1.2); } }
+  .loading-txt { font-family:'Bebas Neue',sans-serif; font-size:12px; letter-spacing:3px; color:#333; }
+
+  /* ERROR */
+  .error-screen { position: fixed; inset: 0; background: #07070f; display: none; align-items: center; justify-content: center; flex-direction: column; gap: 16px; text-align: center; padding: 30px; }
+  .error-screen.show { display: flex; }
+  .error-screen h2 { font-family:'Bebas Neue',sans-serif; font-size:28px; color:#ff2d78; }
+  .error-screen p { font-size:13px; color:#666; }
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div class="loading" id="loading">
+  <div class="loading-dots">
+    <div class="loading-dot"></div>
+    <div class="loading-dot"></div>
+    <div class="loading-dot"></div>
+  </div>
+  <div class="loading-txt">CARGANDO</div>
+</div>
+
+<!-- ERROR -->
+<div class="error-screen" id="error-screen">
+  <h2>Link inválido</h2>
+  <p>No encontramos esta publicación.<br>Verificá el link con quien te lo envió.</p>
+</div>
+
+<!-- LANDING DINÁMICA -->
+<div class="container" id="app" style="display:none">
+  <div class="logo-overlay"><img id="d-logo" src="" alt="Logo"></div>
+  <div id="d-media-wrap"></div>
+  <div class="badge" id="d-badge"></div>
+  <div class="content">
+    <div class="promo-label">Destacado del menú</div>
+    <div class="title" id="d-titulo"></div>
+    <div class="price-box">
+      <div class="old-price" id="d-precio-viejo"></div>
+      <div class="price" id="d-precio-nuevo"></div>
+    </div>
+    <div class="pre-btn">¡Pedí ahora y lo recibís rápido!</div>
+    <a id="d-btn" href="#" class="btn">PEDIR AHORA 🛒</a>
+    <div class="extra">Entrega rápida ⚡</div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = 'https://nryokltlkwpzhrpmtiqz.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5yeW9rbHRsa3dwemhycG10aXF6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgwMTg2MjQsImV4cCI6MjA5MzU5NDYyNH0.vT_zIOB5HjL6Y17EpXXyVamZ_ntbRXJDphJjvTlMH2U';
+  const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  async function cargar() {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
+    const slug = params.get('s');
+
+    if (!id && !slug) return mostrarError();
+
+    let query = db.from('servicios_s2a').select('*');
+    if (id) query = query.eq('id', id);
+    else query = query.eq('slug', slug);
+
+    const { data, error } = await query.single();
+
+    if (error || !data) return mostrarError();
+
+    // Título de página
+    document.title = data.titulo_l1 || 'Oferta';
+
+    // Logo
+    document.getElementById('d-logo').src = data.logo_url || data.foto_perfil || '';
+
+    // Media: imagen del producto
+    const mediaWrap = document.getElementById('d-media-wrap');
+    if (data.imagen_url) {
+      const img = document.createElement('img');
+      img.className = 'bg-img';
+      img.src = data.imagen_url;
+      img.alt = data.titulo_l1 || '';
+      mediaWrap.appendChild(img);
+    } else if (data.link_video_l1) {
+      const vid = document.createElement('video');
+      vid.className = 'bg-media';
+      vid.src = data.link_video_l1;
+      vid.autoplay = true; vid.muted = true; vid.loop = true; vid.playsInline = true;
+      mediaWrap.appendChild(vid);
+    }
+
+    // Badge / descripción
+    document.getElementById('d-badge').textContent = data.desc_l1 || '';
+
+    // Título
+    document.getElementById('d-titulo').textContent = data.titulo_l1 || '';
+
+    // Precios
+    document.getElementById('d-precio-viejo').textContent = data.precio_normal ? `$${data.precio_normal}` : '';
+    document.getElementById('d-precio-nuevo').textContent = data.precio_venta ? `$${data.precio_venta}` : '';
+
+    // Botón WhatsApp
+    const wa = data.wa_num || '';
+    const msg = encodeURIComponent(data.wa_msg || `Hola! Vi la oferta: ${data.titulo_l1}. Quiero pedirlo!`);
+    document.getElementById('d-btn').href = `https://wa.me/${wa}?text=${msg}`;
+
+    // Actualizar OG tags con datos reales
+    const ogTitle = data.titulo_l1 || 'Mirá esto 👀';
+    const ogDesc = data.desc_l1 || 'Tocá para ver la oferta';
+    const ogImg = data.imagen_url || data.logo_url || '';
+    document.title = ogTitle;
+    document.getElementById('og-title').setAttribute('content', ogTitle);
+    document.getElementById('og-desc').setAttribute('content', ogDesc);
+    document.getElementById('og-image').setAttribute('content', ogImg);
+    document.getElementById('tw-title').setAttribute('content', ogTitle);
+    document.getElementById('tw-image').setAttribute('content', ogImg);
+
+    // Mostrar
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+  }
+
+  function mostrarError() {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('error-screen').classList.add('show');
+  }
+
+  cargar();
+</script>
+</body>
+</html>
