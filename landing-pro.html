@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cargando...</title>
+<meta property="og:title" id="og-title" content="">
+<meta property="og:description" id="og-desc" content="">
+<meta property="og:image" id="og-img" content="">
+<meta property="og:type" content="website">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root { --ac: #ff2d78; }
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { background:#07070f; color:#f0f0f5; font-family:'Nunito',sans-serif; overflow-x:hidden; }
+#loading { position:fixed; inset:0; background:#07070f; display:flex; align-items:center; justify-content:center; z-index:999; gap:8px; }
+.ld { width:9px; height:9px; border-radius:50%; background:var(--ac); animation:ldp 1.2s ease-in-out infinite; }
+.ld:nth-child(2){animation-delay:.2s} .ld:nth-child(3){animation-delay:.4s}
+@keyframes ldp{0%,100%{opacity:.2;transform:scale(.8)}50%{opacity:1;transform:scale(1.3)}}
+#error-screen { display:none; position:fixed; inset:0; background:#07070f; align-items:center; justify-content:center; flex-direction:column; gap:12px; text-align:center; padding:30px; }
+#error-screen.show { display:flex; }
+#error-screen h2 { font-family:'Bebas Neue',sans-serif; font-size:28px; color:var(--ac); letter-spacing:2px; }
+#error-screen p { font-size:13px; color:#555; }
+#app { display:none; }
+.hero { position:relative; min-height:100dvh; display:flex; flex-direction:column; justify-content:flex-end; overflow:hidden; }
+.hero-bg { position:absolute; inset:0; background:#0e0e1a; }
+.hero-bg img, .hero-bg video { width:100%; height:100%; object-fit:cover; opacity:.7; }
+.hero-overlay { position:absolute; inset:0; background:linear-gradient(to bottom,rgba(7,7,15,0.1) 0%,rgba(7,7,15,0.97) 100%); }
+.hero-body { position:relative; z-index:2; padding:40px 22px 52px; }
+.hero-logo { width:54px; height:54px; border-radius:50%; object-fit:cover; border:2px solid rgba(255,255,255,0.15); margin-bottom:18px; display:block; }
+.hero-tag { font-size:10px; font-weight:700; letter-spacing:3px; color:var(--ac); text-transform:uppercase; margin-bottom:8px; }
+.hero-h1 { font-family:'Bebas Neue',sans-serif; font-size:clamp(34px,9vw,54px); letter-spacing:1px; line-height:1.05; margin-bottom:10px; }
+.hero-sub { font-size:14px; color:rgba(240,240,245,0.6); line-height:1.65; margin-bottom:22px; }
+.hero-impact { display:inline-flex; align-items:center; gap:10px; background:rgba(255,45,120,0.1); border:1px solid rgba(255,45,120,0.3); border-radius:30px; padding:9px 16px; margin-bottom:22px; }
+.hero-impact-num { font-family:'Bebas Neue',sans-serif; font-size:22px; color:var(--ac); }
+.hero-impact-lbl { font-size:11px; color:rgba(240,240,245,0.55); line-height:1.3; }
+.cta-btn { display:block; width:100%; padding:16px; background:var(--ac); color:#fff; text-align:center; text-decoration:none; border-radius:12px; font-family:'Bebas Neue',sans-serif; font-size:17px; letter-spacing:1px; box-shadow:0 6px 25px rgba(255,45,120,0.35); animation:pulse 2.5s ease-in-out infinite; cursor:pointer; border:none; }
+@keyframes pulse{0%,100%{box-shadow:0 6px 25px rgba(255,45,120,0.35)}50%{box-shadow:0 6px 40px rgba(255,45,120,0.6)}}
+.cta-btn.calendly-btn { background:#006bff; animation:none; }
+.cta-btn.form-btn { background:#1a1a2e; border:1px solid var(--ac); animation:none; }
+.cta-sub { text-align:center; font-size:11px; color:#555; margin-top:8px; }
+section { padding:44px 22px; border-top:1px solid rgba(255,255,255,0.05); }
+.sec-tag { font-size:9px; letter-spacing:3px; color:var(--ac); text-transform:uppercase; font-weight:700; margin-bottom:8px; }
+.sec-title { font-family:'Bebas Neue',sans-serif; font-size:clamp(22px,6vw,30px); letter-spacing:1px; line-height:1.1; margin-bottom:18px; }
+.gallery-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.gallery-item { border-radius:10px; overflow:hidden; aspect-ratio:4/5; background:#0e0e1a; }
+.gallery-item img { width:100%; height:100%; object-fit:cover; display:block; }
+.benefits { display:flex; flex-direction:column; gap:12px; }
+.benefit { display:flex; gap:14px; align-items:flex-start; background:#0e0e1a; border-radius:12px; padding:15px; border:1px solid rgba(255,255,255,0.05); }
+.benefit-icon { font-size:20px; flex-shrink:0; }
+.benefit-text { font-size:13px; color:rgba(240,240,245,0.75); line-height:1.55; }
+.stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); gap:12px; }
+.stat { text-align:center; background:#0e0e1a; border-radius:12px; padding:18px 10px; border:1px solid rgba(255,45,120,0.12); }
+.stat-num { font-family:'Bebas Neue',sans-serif; font-size:clamp(28px,8vw,40px); color:var(--ac); letter-spacing:1px; }
+.stat-lbl { font-size:11px; color:#555; margin-top:4px; line-height:1.4; }
+.testimonios { display:flex; flex-direction:column; gap:12px; }
+.testimonio { background:#0e0e1a; border:1px solid rgba(255,255,255,0.05); border-radius:14px; padding:16px; }
+.test-head { display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+.test-avatar { width:40px; height:40px; border-radius:50%; object-fit:cover; background:#1a1a2e; flex-shrink:0; overflow:hidden; display:flex; align-items:center; justify-content:center; font-size:18px; }
+.test-avatar img { width:100%; height:100%; object-fit:cover; }
+.test-name { font-family:'Bebas Neue',sans-serif; font-size:14px; letter-spacing:1px; }
+.test-result { font-size:10px; color:var(--ac); font-weight:700; }
+.test-stars { color:#ffe600; font-size:11px; margin-bottom:5px; }
+.test-text { font-size:12px; color:rgba(240,240,245,0.6); line-height:1.6; font-style:italic; }
+.paraquien-box { background:linear-gradient(135deg,rgba(255,45,120,0.07),rgba(255,45,120,0.02)); border:1px solid rgba(255,45,120,0.18); border-radius:14px; padding:18px; }
+.paraquien-text { font-size:13px; color:rgba(240,240,245,0.7); line-height:1.7; }
+.garantia-box { display:flex; gap:14px; background:#0e0e1a; border-radius:14px; padding:18px; border:1px solid rgba(255,255,255,0.05); }
+.garantia-icon { font-size:30px; flex-shrink:0; }
+.garantia-title { font-family:'Bebas Neue',sans-serif; font-size:15px; letter-spacing:1px; margin-bottom:5px; }
+.garantia-text { font-size:12px; color:rgba(240,240,245,0.6); line-height:1.6; }
+.cta-final { padding:44px 22px 64px; text-align:center; }
+.cta-final-h2 { font-family:'Bebas Neue',sans-serif; font-size:clamp(24px,7vw,36px); letter-spacing:1px; line-height:1.1; margin-bottom:6px; }
+.cta-final-sub { font-size:13px; color:#555; margin-bottom:24px; }
+.form-box { display:none; background:#0e0e1a; border-radius:12px; padding:16px; margin-top:12px; border:1px solid rgba(255,255,255,0.06); text-align:left; }
+.form-box.show { display:block; }
+.form-box input, .form-box textarea { width:100%; background:#111; border:1px solid #333; color:#fff; border-radius:8px; padding:10px 12px; font-size:13px; font-family:'Nunito',sans-serif; outline:none; margin-bottom:8px; }
+.form-submit { width:100%; background:var(--ac); color:#fff; border:none; border-radius:8px; padding:12px; font-family:'Bebas Neue',sans-serif; font-size:15px; cursor:pointer; }
+.form-ok { font-size:11px; color:#25d366; text-align:center; margin-top:6px; display:none; }
+footer { padding:20px 22px; border-top:1px solid rgba(255,255,255,0.05); text-align:center; }
+footer p { font-size:11px; color:#444; }
+.fade { opacity:0; transform:translateY(18px); transition:opacity .55s ease,transform .55s ease; }
+.fade.in { opacity:1; transform:none; }
+</style>
+</head>
+<body>
+<div id="loading"><div class="ld"></div><div class="ld"></div><div class="ld"></div></div>
+<div id="error-screen"><h2>Link inválido</h2><p>No encontramos esta publicación.</p></div>
+<div id="app"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const db = supabase.createClient(
+  'https://nryokltlkwpzhrpmtiqz.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5yeW9rbHRsa3dwemhycG10aXF6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgwMTg2MjQsImV4cCI6MjA5MzU5NDYyNH0.vT_zIOB5HjL6Y17EpXXyVamZ_ntbRXJDphJjvTlMH2U'
+);
+
+let CTA = {};
+
+function handleCTA() {
+  if (CTA.tipo === 'calendly') {
+    window.open(CTA.url, '_blank');
+  } else if (CTA.tipo === 'formulario') {
+    document.querySelectorAll('.form-box').forEach(f => f.classList.toggle('show'));
+  } else {
+    const msg = encodeURIComponent(CTA.msg);
+    window.open('https://wa.me/' + CTA.wa + '?text=' + msg, '_blank');
+  }
+}
+
+function enviarForm() {
+  const n = document.getElementById('fn').value.trim();
+  const c = document.getElementById('fc').value.trim();
+  const q = document.getElementById('fq').value.trim();
+  if (!n || !c) return;
+  const msg = encodeURIComponent('Consulta\nNombre: ' + n + '\nContacto: ' + c + '\nMensaje: ' + q);
+  window.open('https://wa.me/' + CTA.wa + '?text=' + msg, '_blank');
+  document.querySelectorAll('.form-ok').forEach(el => el.style.display = 'block');
+}
+
+function render(d) {
+  if (d.color_acento) document.documentElement.style.setProperty('--ac', d.color_acento);
+
+  CTA = {
+    tipo: d.cta_tipo || 'whatsapp',
+    wa: d.wa_num || '',
+    msg: d.wa_msg || ('Hola! Vi tu página sobre ' + (d.titulo||'tu servicio') + ' y quiero más info.'),
+    url: d.cta_url || ''
+  };
+
+  const texto = d.cta_texto || 'Contactanos ahora';
+  const clase = CTA.tipo === 'calendly' ? 'calendly-btn' : CTA.tipo === 'formulario' ? 'form-btn' : '';
+  const btn = '<button class="cta-btn ' + clase + '" onclick="handleCTA()">' + texto + '</button>';
+  const form = CTA.tipo === 'formulario' ? '<div class="form-box"><input type="text" id="fn" placeholder="Tu nombre"><input type="text" id="fc" placeholder="Tu WhatsApp o email"><textarea id="fq" placeholder="¿Qué querés saber?"></textarea><button class="form-submit" onclick="enviarForm()">ENVIAR</button><div class="form-ok">✔ Enviado</div></div>' : '';
+
+  const fotos = [d.foto1, d.foto2, d.foto3, d.foto4].filter(Boolean);
+  const bullets = [d.bullet1, d.bullet2, d.bullet3, d.bullet4].filter(Boolean);
+  const stats = [[d.stat1_num,d.stat1_label],[d.stat2_num,d.stat2_label],[d.stat3_num,d.stat3_label]].filter(s=>s[0]);
+  const tests = [
+    d.test1_nombre ? [d.test1_nombre,d.test1_resultado||'',d.test1_texto||'',d.test1_foto||''] : null,
+    d.test2_nombre ? [d.test2_nombre,d.test2_resultado||'',d.test2_texto||'',''] : null,
+    d.test3_nombre ? [d.test3_nombre,d.test3_resultado||'',d.test3_texto||'',''] : null,
+  ].filter(Boolean);
+  const icons = ['✦','◆','▲','●'];
+
+  let h = '';
+
+  h += '<div class="hero">';
+  h += '<div class="hero-bg">';
+  if (d.hero_video) h += '<video src="' + d.hero_video + '" autoplay muted loop playsinline></video>';
+  else if (d.hero_imagen) h += '<img src="' + d.hero_imagen + '" alt="">';
+  h += '</div><div class="hero-overlay"></div><div class="hero-body fade">';
+  if (d.logo_url) h += '<img class="hero-logo" src="' + d.logo_url + '" alt="Logo">';
+  if (d.tag) h += '<div class="hero-tag">' + d.tag + '</div>';
+  h += '<h1 class="hero-h1">' + (d.titulo||'') + '</h1>';
+  if (d.subtitulo) h += '<p class="hero-sub">' + d.subtitulo + '</p>';
+  if (d.mostrar_impacto && d.impacto_num) h += '<div class="hero-impact"><div class="hero-impact-num">' + d.impacto_num + '</div><div class="hero-impact-lbl">' + (d.impacto_label||'') + '</div></div>';
+  h += btn + form;
+  if (d.cta_sub) h += '<div class="cta-sub">' + d.cta_sub + '</div>';
+  h += '</div></div>';
+
+  if (d.mostrar_galeria && fotos.length) {
+    h += '<section class="fade"><div class="sec-tag">Galería</div><h2 class="sec-title">' + (d.galeria_titulo||'El producto') + '</h2><div class="gallery-grid">';
+    fotos.forEach(f => { h += '<div class="gallery-item"><img src="' + f + '" loading="lazy"></div>'; });
+    h += '</div></section>';
+  }
+
+  if (d.mostrar_beneficios && bullets.length) {
+    h += '<section class="fade"><div class="sec-tag">Beneficios</div><h2 class="sec-title">' + (d.beneficios_titulo||'¿Por qué elegirnos?') + '</h2><div class="benefits">';
+    bullets.forEach((b,i) => { h += '<div class="benefit"><div class="benefit-icon">' + icons[i%4] + '</div><div class="benefit-text">' + b + '</div></div>'; });
+    h += '</div></section>';
+  }
+
+  if (stats.length) {
+    h += '<section class="fade"><div class="stats-grid">';
+    stats.forEach(s => { h += '<div class="stat"><div class="stat-num">' + s[0] + '</div><div class="stat-lbl">' + (s[1]||'') + '</div></div>'; });
+    h += '</div></section>';
+  }
+
+  if (d.mostrar_testimonios && tests.length) {
+    h += '<section class="fade"><div class="sec-tag">Testimonios</div><h2 class="sec-title">' + (d.testimonios_titulo||'Lo que dicen') + '</h2><div class="testimonios">';
+    tests.forEach(t => {
+      h += '<div class="testimonio"><div class="test-head"><div class="test-avatar">' + (t[3] ? '<img src="' + t[3] + '" alt="">' : '👤') + '</div><div><div class="test-name">' + t[0] + '</div>' + (t[1] ? '<div class="test-result">' + t[1] + '</div>' : '') + '</div></div><div class="test-stars">★★★★★</div><div class="test-text">"' + t[2] + '"</div></div>';
+    });
+    h += '</div></section>';
+  }
+
+  if (d.mostrar_paraquien && d.paraquien_texto) {
+    h += '<section class="fade"><div class="sec-tag">Para quién</div><h2 class="sec-title">' + (d.paraquien_titulo||'¿Es para vos?') + '</h2><div class="paraquien-box"><p class="paraquien-text">' + d.paraquien_texto + '</p></div></section>';
+  }
+
+  if (d.mostrar_garantia && d.garantia_texto) {
+    h += '<section class="fade"><div class="garantia-box"><div class="garantia-icon">🛡️</div><div><div class="garantia-title">' + (d.garantia_titulo||'Garantía') + '</div><div class="garantia-text">' + d.garantia_texto + '</div></div></div></section>';
+  }
+
+  h += '<div class="cta-final fade"><h2 class="cta-final-h2">' + (d.cta_final_titulo||'¿Listo para empezar?') + '</h2><p class="cta-final-sub">' + (d.cta_final_sub||'Sin compromiso. Sin letra chica.') + '</p>' + btn + form + '</div>';
+  h += '<footer><p>' + (d.footer_texto || '© ' + new Date().getFullYear() + ' ' + (d.titulo||'')) + '</p></footer>';
+
+  document.getElementById('app').innerHTML = h;
+
+  document.title = d.titulo || '';
+  document.getElementById('og-title').setAttribute('content', d.titulo||'');
+  document.getElementById('og-desc').setAttribute('content', d.subtitulo||'');
+  document.getElementById('og-img').setAttribute('content', d.hero_imagen||d.logo_url||'');
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); } });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.fade').forEach(el => obs.observe(el));
+}
+
+async function cargar() {
+  const p = new URLSearchParams(window.location.search);
+  const slug = p.get('s');
+  const id = p.get('id');
+  if (!slug && !id) { mostrarError(); return; }
+  const q = slug
+    ? db.from('s2a_landings_pro').select('*').eq('slug', slug).single()
+    : db.from('s2a_landings_pro').select('*').eq('id', id).single();
+  const { data, error } = await q;
+  if (error || !data) { mostrarError(); return; }
+  render(data);
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+}
+
+function mostrarError() {
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('error-screen').classList.add('show');
+}
+
+cargar();
+</script>
+</body>
+</html>
