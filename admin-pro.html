@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>S2A — Admin Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root { --bg:#07070f; --bg2:#0e0e1a; --ac:#ff2d78; --am:#ffe600; --verde:#25d366; --gris:#333345; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:#fff; font-family:'Nunito',sans-serif; min-height:100vh; padding:20px 16px 80px; }
+h1 { font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:2px; margin-bottom:4px; }
+h1 em { color:var(--ac); font-style:normal; }
+.sub { font-size:10px; color:#444; letter-spacing:2px; margin-bottom:20px; }
+.card { background:var(--bg2); border:1px solid rgba(255,45,120,0.15); border-radius:14px; padding:16px; margin-bottom:12px; }
+.card-title { font-family:'Bebas Neue',sans-serif; font-size:12px; letter-spacing:2px; color:var(--ac); margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; }
+label { font-size:10px; font-weight:700; letter-spacing:1px; color:#555; display:block; margin-bottom:4px; text-transform:uppercase; }
+input, select, textarea { width:100%; background:#111; border:1px solid var(--gris); color:#fff; border-radius:8px; padding:10px 12px; font-size:13px; font-family:'Nunito',sans-serif; outline:none; margin-bottom:10px; }
+input:focus, select:focus, textarea:focus { border-color:var(--ac); }
+textarea { resize:vertical; min-height:60px; }
+input[type=color] { height:40px; padding:4px; cursor:pointer; }
+select option { background:#111; }
+.toggle { position:relative; width:42px; height:24px; flex-shrink:0; }
+.toggle input { opacity:0; width:0; height:0; }
+.toggle-slider { position:absolute; inset:0; background:var(--gris); border-radius:24px; cursor:pointer; transition:.2s; }
+.toggle-slider:before { content:''; position:absolute; width:18px; height:18px; left:3px; top:3px; background:#fff; border-radius:50%; transition:.2s; }
+.toggle input:checked + .toggle-slider { background:var(--ac); }
+.toggle input:checked + .toggle-slider:before { transform:translateX(18px); }
+.upload-zone { border:2px dashed var(--gris); border-radius:10px; padding:14px; text-align:center; cursor:pointer; position:relative; margin-bottom:10px; transition:.2s; }
+.upload-zone:hover { border-color:var(--ac); }
+.upload-zone input[type=file] { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
+.upload-icon { font-size:20px; }
+.upload-lbl { font-size:11px; color:#555; margin-top:2px; }
+.upload-prev { width:100%; height:90px; object-fit:cover; border-radius:6px; margin-top:6px; display:none; }
+.upload-prev.show { display:block; }
+.upload-ok { font-size:10px; color:var(--verde); margin-top:4px; display:none; }
+.upload-ok.show { display:block; }
+.grid2 { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.slug-row { display:flex; gap:8px; align-items:center; margin-bottom:10px; }
+.slug-row input { margin-bottom:0; flex:1; }
+.btn-auto { background:var(--gris); color:#fff; border:none; border-radius:8px; padding:10px 12px; font-family:'Bebas Neue',sans-serif; font-size:12px; cursor:pointer; white-space:nowrap; }
+.btn-auto:hover { background:var(--ac); }
+.btn-save { width:100%; background:var(--ac); color:#fff; border:none; border-radius:10px; padding:15px; font-family:'Bebas Neue',sans-serif; font-size:17px; letter-spacing:2px; cursor:pointer; margin-top:8px; }
+.btn-save:disabled { background:#333; color:#555; cursor:not-allowed; }
+.err { font-size:11px; color:#ff4444; margin-top:6px; display:none; }
+#resultado { display:none; background:#0a1a0a; border:1px solid var(--verde); border-radius:12px; padding:18px; margin-top:14px; }
+#resultado h3 { font-family:'Bebas Neue',sans-serif; color:var(--verde); font-size:15px; letter-spacing:1px; margin-bottom:8px; }
+.link-box { background:#111; border-radius:8px; padding:10px; font-size:12px; color:var(--am); word-break:break-all; margin-bottom:10px; }
+.btn-copy { width:100%; background:var(--am); color:#000; border:none; border-radius:8px; padding:11px; font-family:'Bebas Neue',sans-serif; font-size:13px; cursor:pointer; }
+</style>
+</head>
+<body>
+
+<h1>S2A <em>ADMIN PRO</em></h1>
+<div class="sub">CONFIGURÁ TU LANDING PREMIUM</div>
+
+<!-- BÁSICO -->
+<div class="card">
+  <div class="card-title">🏪 DATOS BÁSICOS</div>
+  <label>Título principal</label>
+  <input type="text" id="f-titulo" placeholder="Ej: Paneles Solares Premium / Método de Ventas Sin Fricción">
+  <label>Subtítulo</label>
+  <textarea id="f-subtitulo" placeholder="Ej: Ahorrá hasta el 90% en tu factura / La estrategia que solo entrego a mis clientes privados."></textarea>
+  <label>Tag / etiqueta</label>
+  <input type="text" id="f-tag" placeholder="Ej: Tecnología solar · Instalación incluida / Acceso limitado · Solo 10 lugares">
+  <label>Color de acento</label>
+  <input type="color" id="f-color" value="#ff2d78">
+</div>
+
+<!-- MEDIA -->
+<div class="card">
+  <div class="card-title">🎬 HERO (IMAGEN O VIDEO)</div>
+  <label>Imagen hero</label>
+  <div class="upload-zone">
+    <input type="file" accept="image/*" onchange="subir(this,'hero_imagen')">
+    <div class="upload-icon">🖼</div>
+    <div class="upload-lbl">Subir imagen de fondo</div>
+    <img class="upload-prev" id="prev-hero_imagen">
+    <div class="upload-ok" id="ok-hero_imagen">✔ Subida</div>
+  </div>
+  <label>Video hero (reemplaza imagen si existe)</label>
+  <div class="upload-zone">
+    <input type="file" accept="video/*" onchange="subir(this,'hero_video')">
+    <div class="upload-icon">🎥</div>
+    <div class="upload-lbl">Subir video de fondo</div>
+    <div class="upload-ok" id="ok-hero_video">✔ Subido</div>
+  </div>
+  <label>Logo</label>
+  <div class="upload-zone">
+    <input type="file" accept="image/*" onchange="subir(this,'logo_url')">
+    <div class="upload-icon">🏷</div>
+    <div class="upload-lbl">Subir logo</div>
+    <img class="upload-prev" id="prev-logo_url">
+    <div class="upload-ok" id="ok-logo_url">✔ Subido</div>
+  </div>
+</div>
+
+<!-- IMPACTO -->
+<div class="card">
+  <div class="card-title">⚡ NÚMERO DE IMPACTO <label class="toggle"><input type="checkbox" id="tog-impacto"><span class="toggle-slider"></span></label></div>
+  <label>Número</label>
+  <input type="text" id="f-impacto_num" placeholder="Ej: -90% / +300%">
+  <label>Descripción</label>
+  <input type="text" id="f-impacto_label" placeholder="Ej: en tu factura de luz / de conversión en 30 días">
+</div>
+
+<!-- GALERÍA -->
+<div class="card">
+  <div class="card-title">🖼 GALERÍA <label class="toggle"><input type="checkbox" id="tog-galeria" checked><span class="toggle-slider"></span></label></div>
+  <label>Título de sección</label>
+  <input type="text" id="f-galeria_titulo" placeholder="Ej: El producto / Resultados reales">
+  <div class="grid2">
+    <div><label>Foto 1</label><div class="upload-zone"><input type="file" accept="image/*" onchange="subir(this,'foto1')"><div class="upload-icon">📷</div><div class="upload-lbl">Foto 1</div><img class="upload-prev" id="prev-foto1"><div class="upload-ok" id="ok-foto1">✔</div></div></div>
+    <div><label>Foto 2</label><div class="upload-zone"><input type="file" accept="image/*" onchange="subir(this,'foto2')"><div class="upload-icon">📷</div><div class="upload-lbl">Foto 2</div><img class="upload-prev" id="prev-foto2"><div class="upload-ok" id="ok-foto2">✔</div></div></div>
+    <div><label>Foto 3</label><div class="upload-zone"><input type="file" accept="image/*" onchange="subir(this,'foto3')"><div class="upload-icon">📷</div><div class="upload-lbl">Foto 3</div><img class="upload-prev" id="prev-foto3"><div class="upload-ok" id="ok-foto3">✔</div></div></div>
+    <div><label>Foto 4</label><div class="upload-zone"><input type="file" accept="image/*" onchange="subir(this,'foto4')"><div class="upload-icon">📷</div><div class="upload-lbl">Foto 4</div><img class="upload-prev" id="prev-foto4"><div class="upload-ok" id="ok-foto4">✔</div></div></div>
+  </div>
+</div>
+
+<!-- BENEFICIOS -->
+<div class="card">
+  <div class="card-title">✦ BENEFICIOS <label class="toggle"><input type="checkbox" id="tog-beneficios" checked><span class="toggle-slider"></span></label></div>
+  <label>Título de sección</label>
+  <input type="text" id="f-beneficios_titulo" placeholder="Ej: ¿Por qué elegirnos? / ¿Qué vas a lograr?">
+  <label>Beneficio 1</label><input type="text" id="f-bullet1" placeholder="Instalación en 24hs / Sistema paso a paso probado">
+  <label>Beneficio 2</label><input type="text" id="f-bullet2" placeholder="Garantía de 10 años / Soporte directo por WhatsApp">
+  <label>Beneficio 3</label><input type="text" id="f-bullet3" placeholder="Financiación sin interés / Acceso de por vida">
+  <label>Beneficio 4 (opcional)</label><input type="text" id="f-bullet4" placeholder="">
+</div>
+
+<!-- TESTIMONIOS -->
+<div class="card">
+  <div class="card-title">⭐ TESTIMONIOS <label class="toggle"><input type="checkbox" id="tog-testimonios"><span class="toggle-slider"></span></label></div>
+  <label>Título de sección</label>
+  <input type="text" id="f-testimonios_titulo" placeholder="Ej: Lo que dicen nuestros clientes / Casos reales">
+  <label>Nombre 1</label><input type="text" id="f-test1_nombre" placeholder="Ej: María G. / Carlos R.">
+  <label>Resultado</label><input type="text" id="f-test1_resultado" placeholder="Ej: Ahorro $8000/mes / Cerré 3 ventas en la primera semana">
+  <label>Texto</label><textarea id="f-test1_texto" placeholder="Ej: Instalaron rápido y profesional... / Nunca pensé que iba a funcionar tan rápido..."></textarea>
+  <label>Nombre 2</label><input type="text" id="f-test2_nombre" placeholder="">
+  <label>Resultado</label><input type="text" id="f-test2_resultado" placeholder="">
+  <label>Texto</label><textarea id="f-test2_texto" placeholder=""></textarea>
+  <label>Nombre 3</label><input type="text" id="f-test3_nombre" placeholder="">
+  <label>Resultado</label><input type="text" id="f-test3_resultado" placeholder="">
+  <label>Texto</label><textarea id="f-test3_texto" placeholder=""></textarea>
+</div>
+
+<!-- PARA QUIÉN -->
+<div class="card">
+  <div class="card-title">🎯 PARA QUIÉN <label class="toggle"><input type="checkbox" id="tog-paraquien"><span class="toggle-slider"></span></label></div>
+  <label>Título</label><input type="text" id="f-paraquien_titulo" placeholder="¿Es para vos? / ¿Para quién es esto?">
+  <label>Texto</label><textarea id="f-paraquien_texto" placeholder="Ideal para propietarios de casa / Para coaches, consultores o vendedores que quieren cerrar más sin perseguir clientes"></textarea>
+</div>
+
+<!-- GARANTÍA -->
+<div class="card">
+  <div class="card-title">🛡 GARANTÍA <label class="toggle"><input type="checkbox" id="tog-garantia"><span class="toggle-slider"></span></label></div>
+  <label>Título</label><input type="text" id="f-garantia_titulo" placeholder="Garantía total / Sin riesgo">
+  <label>Texto</label><textarea id="f-garantia_texto" placeholder="Si no quedás satisfecho en 30 días te devolvemos el dinero / Si en 14 días no ves resultados, te devuelvo todo"></textarea>
+</div>
+
+<!-- PRECIO -->
+<div class="card">
+  <div class="card-title">💰 PRECIO <label class="toggle"><input type="checkbox" id="tog-precio"><span class="toggle-slider"></span></label></div>
+  <label>Precio actual</label>
+  <input type="text" id="f-precio" placeholder="Ej: $299.000 / USD 297">
+  <label>Precio anterior (tachado)</label>
+  <input type="text" id="f-precio_antes" placeholder="Ej: $399.000 / USD 497">
+  <label>Texto debajo del precio</label>
+  <input type="text" id="f-precio_label" placeholder="Ej: pago único · cuotas / pago único · acceso inmediato">
+</div>
+
+<!-- URGENCIA -->
+<div class="card">
+  <div class="card-title">⏳ URGENCIA <label class="toggle"><input type="checkbox" id="tog-urgencia"><span class="toggle-slider"></span></label></div>
+  <label>Tipo</label>
+  <select id="f-urgencia_tipo" onchange="cambiarUrgencia(this.value)">
+    <option value="contador">Contador de horas</option>
+    <option value="fecha">Hasta una fecha</option>
+    <option value="descuento">Descuento por tiempo limitado</option>
+  </select>
+  <label>Texto</label>
+  <input type="text" id="f-urgencia_texto" placeholder="Ej: Producción de mayo agotada / Cohorte cerrando en...">
+  <div id="row-horas">
+    <label>Horas del contador</label>
+    <input type="number" id="f-urgencia_horas" placeholder="Ej: 24 / 72">
+  </div>
+  <div id="row-fecha" style="display:none">
+    <label>Fecha límite</label>
+    <input type="text" id="f-urgencia_fecha" placeholder="Ej: 31 de mayo de 2026 / 15 de junio de 2026">
+  </div>
+  <div id="row-descuento" style="display:none">
+    <label>Descuento</label>
+    <input type="text" id="f-urgencia_descuento" placeholder="Ej: 20% / 30%">
+  </div>
+</div>
+
+<!-- SOCIAL PROOF -->
+<div class="card">
+  <div class="card-title">✅ SOCIAL PROOF <label class="toggle"><input type="checkbox" id="tog-social_proof"><span class="toggle-slider"></span></label></div>
+  <label>Texto</label>
+  <input type="text" id="f-social_proof" placeholder="Ej: 47 personas compraron esta semana / 12 personas se inscribieron hoy">
+</div>
+
+<!-- CTA -->
+<div class="card">
+  <div class="card-title">📲 BOTÓN DE ACCIÓN</div>
+  <label>Tipo de CTA</label>
+  <select id="f-cta_tipo" onchange="cambiarCTA(this.value)">
+    <option value="whatsapp">WhatsApp</option>
+    <option value="calendly">Calendly (agendar llamada)</option>
+    <option value="formulario">Formulario de contacto</option>
+  </select>
+  <label>Texto del botón</label>
+  <input type="text" id="f-cta_texto" placeholder="Ej: Quiero mi cotización gratis / Quiero acceder ahora">
+  <label>Texto debajo del botón (opcional)</label>
+  <input type="text" id="f-cta_sub" placeholder="Ej: Sin compromiso / Solo quedan 3 lugares">
+  <div id="row-wa">
+    <label>Número WhatsApp</label>
+    <input type="text" id="f-wa_num" placeholder="Ej: 5493794946552">
+    <label>Mensaje pre-escrito (opcional)</label>
+    <textarea id="f-wa_msg" placeholder="Ej: Hola! Vi tu página sobre paneles y quiero una cotización / Hola! Quiero saber más sobre el programa"></textarea>
+  </div>
+  <div id="row-calendly" style="display:none">
+    <label>Link de Calendly</label>
+    <input type="text" id="f-cta_url" placeholder="Ej: https://calendly.com/tu-usuario/30min">
+  </div>
+  <label>Título CTA final</label>
+  <input type="text" id="f-cta_final_titulo" placeholder="Ej: ¿Listo para empezar? / ¿Querés ser el próximo caso de éxito?">
+  <label>Subtítulo CTA final</label>
+  <input type="text" id="f-cta_final_sub" placeholder="Ej: Sin letra chica. Sin compromisos. / Acceso inmediato. Sin letra chica.">
+</div>
+
+<!-- FOOTER -->
+<div class="card">
+  <div class="card-title">📝 FOOTER</div>
+  <label>Texto del pie</label>
+  <input type="text" id="f-footer_texto" placeholder="Ej: © 2026 Paneles Norte / © 2026 Tu Nombre · Todos los derechos reservados">
+</div>
+
+<!-- SLUG -->
+<div class="card">
+  <div class="card-title">🔗 LINK CORTO</div>
+  <div class="slug-row">
+    <input type="text" id="f-slug" placeholder="Ej: paneles-norte / metodo-ventas">
+    <button class="btn-auto" onclick="autoSlug()">AUTO</button>
+  </div>
+  <div style="font-size:11px;color:#444;">Tu link: <span id="slug-prev" style="color:var(--am)">...vercel.app/landing-pro.html?s=</span></div>
+</div>
+
+<button class="btn-save" id="btn-save" onclick="guardar()">GUARDAR Y GENERAR LINK</button>
+<div class="err" id="err-msg"></div>
+
+<div id="resultado">
+  <h3>✅ ¡LISTO! TU LINK ES:</h3>
+  <div class="link-box" id="link-generado"></div>
+  <button class="btn-copy" onclick="copiar()">📋 COPIAR LINK</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const db = supabase.createClient(
+  'https://nryokltlkwpzhrpmtiqz.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5yeW9rbHRsa3dwemhycG10aXF6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgwMTg2MjQsImV4cCI6MjA5MzU5NDYyNH0.vT_zIOB5HjL6Y17EpXXyVamZ_ntbRXJDphJjvTlMH2U'
+);
+const CLOUD = 'ds2udm1nc';
+const PRESET = 's2a_uploads';
+const LANDING_BASE = 'https://micro-landing-s2a-supabase.vercel.app/landing-pro.html';
+let urls = {};
+
+async function subir(input, campo) {
+  const file = input.files[0];
+  if (!file) return;
+  const okEl = document.getElementById('ok-' + campo);
+  const prevEl = document.getElementById('prev-' + campo);
+  if (okEl) { okEl.textContent = 'Subiendo...'; okEl.classList.add('show'); }
+  const fd = new FormData();
+  fd.append('file', file);
+  fd.append('upload_preset', PRESET);
+  fd.append('folder', 's2a/pro');
+  const tipo = file.type.startsWith('video') ? 'video' : 'image';
+  try {
+    const res = await fetch('https://api.cloudinary.com/v1_1/' + CLOUD + '/' + tipo + '/upload', { method:'POST', body:fd });
+    const data = await res.json();
+    urls[campo] = data.secure_url;
+    if (okEl) okEl.textContent = '✔ Subido';
+    if (prevEl && tipo === 'image') { prevEl.src = data.secure_url; prevEl.classList.add('show'); }
+  } catch(e) { if (okEl) okEl.textContent = '✘ Error'; }
+}
+
+function cambiarCTA(val) {
+  document.getElementById('row-wa').style.display = val === 'whatsapp' ? 'block' : 'none';
+  document.getElementById('row-calendly').style.display = val === 'calendly' ? 'block' : 'none';
+}
+
+function cambiarUrgencia(val) {
+  document.getElementById('row-horas').style.display = val === 'contador' ? 'block' : 'none';
+  document.getElementById('row-fecha').style.display = val === 'fecha' ? 'block' : 'none';
+  document.getElementById('row-descuento').style.display = val === 'descuento' ? 'block' : 'none';
+}
+
+function autoSlug() {
+  const t = document.getElementById('f-titulo').value;
+  const base = t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  const rand = Math.random().toString(36).slice(2,5);
+  document.getElementById('f-slug').value = base ? base + '-' + rand : 'pro-' + rand;
+  actualizarSlugPreview();
+}
+
+function actualizarSlugPreview() {
+  const s = document.getElementById('f-slug').value;
+  document.getElementById('slug-prev').textContent = LANDING_BASE + '?s=' + s;
+}
+document.getElementById('f-slug').addEventListener('input', actualizarSlugPreview);
+
+function v(id) { return document.getElementById('f-' + id)?.value?.trim() || null; }
+function tog(id) { return document.getElementById('tog-' + id)?.checked || false; }
+
+async function guardar() {
+  const btn = document.getElementById('btn-save');
+  const errEl = document.getElementById('err-msg');
+  errEl.style.display = 'none';
+  const slug = v('slug');
+  const titulo = v('titulo');
+  if (!titulo || !slug) { errEl.textContent = 'Completá título y slug.'; errEl.style.display='block'; return; }
+  btn.disabled = true; btn.textContent = 'GUARDANDO...';
+
+  const payload = {
+    slug, titulo,
+    subtitulo: v('subtitulo'),
+    tag: v('tag'),
+    color_acento: document.getElementById('f-color').value,
+    logo_url: urls['logo_url']||null,
+    hero_imagen: urls['hero_imagen']||null,
+    hero_video: urls['hero_video']||null,
+    impacto_num: v('impacto_num'),
+    impacto_label: v('impacto_label'),
+    mostrar_impacto: tog('impacto'),
+    foto1: urls['foto1']||null, foto2: urls['foto2']||null,
+    foto3: urls['foto3']||null, foto4: urls['foto4']||null,
+    galeria_titulo: v('galeria_titulo'),
+    mostrar_galeria: tog('galeria'),
+    bullet1: v('bullet1'), bullet2: v('bullet2'),
+    bullet3: v('bullet3'), bullet4: v('bullet4'),
+    beneficios_titulo: v('beneficios_titulo'),
+    mostrar_beneficios: tog('beneficios'),
+    test1_nombre: v('test1_nombre'), test1_resultado: v('test1_resultado'), test1_texto: v('test1_texto'),
+    test2_nombre: v('test2_nombre'), test2_resultado: v('test2_resultado'), test2_texto: v('test2_texto'),
+    test3_nombre: v('test3_nombre'), test3_resultado: v('test3_resultado'), test3_texto: v('test3_texto'),
+    testimonios_titulo: v('testimonios_titulo'),
+    mostrar_testimonios: tog('testimonios'),
+    paraquien_titulo: v('paraquien_titulo'), paraquien_texto: v('paraquien_texto'),
+    mostrar_paraquien: tog('paraquien'),
+    garantia_titulo: v('garantia_titulo'), garantia_texto: v('garantia_texto'),
+    mostrar_garantia: tog('garantia'),
+    precio: v('precio'), precio_antes: v('precio_antes'), precio_label: v('precio_label'),
+    mostrar_precio: tog('precio'),
+    urgencia_tipo: document.getElementById('f-urgencia_tipo').value,
+    urgencia_texto: v('urgencia_texto'),
+    urgencia_horas: parseInt(document.getElementById('f-urgencia_horas').value)||null,
+    urgencia_fecha: v('urgencia_fecha'),
+    urgencia_descuento: v('urgencia_descuento'),
+    mostrar_urgencia: tog('urgencia'),
+    social_proof: v('social_proof'),
+    mostrar_social_proof: tog('social_proof'),
+    cta_tipo: document.getElementById('f-cta_tipo').value,
+    cta_texto: v('cta_texto'), cta_url: v('cta_url'), cta_sub: v('cta_sub'),
+    cta_final_titulo: v('cta_final_titulo'), cta_final_sub: v('cta_final_sub'),
+    wa_num: v('wa_num'), wa_msg: v('wa_msg'),
+    footer_texto: v('footer_texto'),
+  };
+
+  const { data, error } = await db.from('s2a_landings_pro').insert([payload]).select().single();
+  if (error) {
+    errEl.textContent = error.message.includes('unique') ? 'Ese slug ya existe, elegí otro.' : error.message;
+    errEl.style.display = 'block';
+    btn.disabled = false; btn.textContent = 'GUARDAR Y GENERAR LINK';
+    return;
+  }
+  const link = LANDING_BASE + '?s=' + slug;
+  document.getElementById('link-generado').textContent = link;
+  document.getElementById('resultado').style.display = 'block';
+  document.getElementById('resultado').scrollIntoView({ behavior:'smooth' });
+  btn.textContent = '✔ GUARDADO';
+}
+
+function copiar() {
+  const link = document.getElementById('link-generado').textContent;
+  navigator.clipboard.writeText(link).then(() => {
+    const b = document.querySelector('.btn-copy');
+    b.textContent = '✔ COPIADO';
+    setTimeout(() => b.textContent = '📋 COPIAR LINK', 2000);
+  });
+}
+</script>
+</body>
+</html>
